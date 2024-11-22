@@ -12,11 +12,21 @@ export default defineConfig({
         target: 'http://localhost:3001',
         secure: false,
         changeOrigin: true
-      }
+      },
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
     }
   }, 
   test: {
     environment: 'happy-dom',
     globals: true
+  },
+  build: {
+    rollupOptions: {
+      external: ['winston', 'colors']
+    }
   }
 })

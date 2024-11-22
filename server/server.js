@@ -1,8 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const path = require('path');
 const { authMiddleware } = require('./utils/auth');
+const sheetsRouter = require('./routes/api/sheets');
+const packagemakerRouter = require('./routes/api/packagemaker');
+//const packageRouter = require('./routes/api/package');
 
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
@@ -14,6 +18,8 @@ const server = new ApolloServer({
   resolvers,
 });
 
+const cors = require('cors');
+
 // Create a new instance of an Apollo server with the GraphQL schema
 const startApolloServer = async () => {
   await server.start();
@@ -21,6 +27,16 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
+  // Add some basic error logging
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    next(err);
+  });
+
+  // Move this BEFORE the static assets and catch-all routes
+  app.use('/api/sheets', sheetsRouter);
+  app.use('/api/packagemaker', packagemakerRouter);
+  //app.use('/api/package', packageRouter);
   // Serve up static assets
   app.use('/images', express.static(path.join(__dirname, '../client/public/images')));
 
