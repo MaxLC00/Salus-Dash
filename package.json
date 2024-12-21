@@ -13,11 +13,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "concurrently": "^5.1.0"
-  },
   "devDependencies": {
-    "winston": "^3.x.x",
-    "colors": "^1.x.x"
+    "concurrently": "^5.1.0"
   }
 }

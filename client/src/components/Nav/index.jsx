@@ -37,12 +37,15 @@ function Nav() {
     <header className="flex-row px-1">
       <h1>
         <Link to="/">
-          SALUS
+          Salus Dashboards
         </Link>
       </h1>
         <ul>
             <li>
-                <Link to="/Sheets">Sheets</Link>
+                <Link to="/about">About</Link>
+            </li>
+            <li>
+                <Link to="/boards">Boards</Link>
             </li>
         </ul>
        

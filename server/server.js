@@ -1,56 +1,40 @@
-require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const path = require('path');
 const { authMiddleware } = require('./utils/auth');
-const sheetsRouter = require('./routes/api/sheets');
-const packagemakerRouter = require('./routes/api/packagemaker');
-//const packageRouter = require('./routes/api/package');
 
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 
-const PORT = process.env.PORT || 3001;
+const sheetsRoutes = require('./routes/api/sheets');
+
+const PORT = process.env.PORT || 3002;
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Your routes here
+app.use('/api/sheets', (req, res) => {
+    res.json({ message: "Test response" }); // Test endpoint
+});
+
+// Create a new instance of an Apollo server with the GraphQL schema
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  // any other Apollo Server options
 });
 
-const cors = require('cors');
-
-// Create a new instance of an Apollo server with the GraphQL schema
+// Wrap the server startup in an async function
 const startApolloServer = async () => {
   await server.start();
-
-  app.use(express.urlencoded({ extended: false }));
-  app.use(express.json());
-
-  // Add some basic error logging
-  app.use((err, req, res, next) => {
-    console.error(err.stack);
-    next(err);
-  });
-
-  // Move this BEFORE the static assets and catch-all routes
-  app.use('/api/sheets', sheetsRouter);
-  app.use('/api/packagemaker', packagemakerRouter);
-  //app.use('/api/package', packageRouter);
-  // Serve up static assets
-  app.use('/images', express.static(path.join(__dirname, '../client/public/images')));
-
+  
   app.use('/graphql', expressMiddleware(server, {
     context: authMiddleware
   }));
-
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-    });
-  }
 
   db.once('open', () => {
     app.listen(PORT, () => {
@@ -60,5 +44,23 @@ const startApolloServer = async () => {
   });
 };
 
-// Call the async function to start the server
-startApolloServer();
+// Call the async function
+startApolloServer().catch(error => {
+  console.error('Failed to start server:', error);
+});
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Serve up static assets
+app.use('/images', express.static(path.join(__dirname, '../client/public/images')));
+
+app.use('/api', sheetsRoutes);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
+}

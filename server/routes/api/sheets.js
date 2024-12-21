@@ -1,24 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const client = require('smartsheet');
+const router = require('express').Router();
 
-// Initialize Smartsheet client
-const smartsheet = client.createClient({
-    accessToken: process.env.SMARTSHEET_ACCESS_TOKEN
-});
-
-// Note: Since we're using '/api/sheets' in the main app, 
-// we just need '/' here
-router.get('/', async (req, res) => {
-    console.log('API route hit');
+router.get('/sheets', async (req, res) => {
     try {
-        const response = await smartsheet.sheets.listSheets();
-        console.log('Smartsheet response:', response);
-        res.json(response);
+        // Your logic to fetch sheets data
+        const sheets = []; // Replace with actual data
+        res.json(sheets);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
     }
 });
 
-module.exports = router;
+module.exports = router

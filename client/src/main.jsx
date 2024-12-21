@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
@@ -8,17 +7,8 @@ import Home from './pages/Home';
 import NoMatch from './pages/NoMatch';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Sheets from './pages/Sheets';
-import Packagemaker from './pages/Packagemaker';
-import Package from './pages/package';
-
-const originalConsoleWarn = console.warn;
-console.warn = (...args) => {
-  if (args[0]?.includes?.('React Router Future Flag Warning')) {
-    return;
-  }
-  originalConsoleWarn(...args);
-};
+import About from './pages/About.jsx';
+import Boards from './pages/Boards';
 
 const router = createBrowserRouter([
   {
@@ -36,21 +26,16 @@ const router = createBrowserRouter([
         path: '/signup',
         element: <Signup />
       }, {
-        path: '/Sheets',
-        element: <Sheets />
+        path: '/about',
+        element: <About />
       }, {
-        path: '/packagemaker',
-        element: <Packagemaker />
-      }, {
-        path: '/package',
-        element: <Package />
-      },    
+        path: '/boards',
+        element: <Boards />
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );
